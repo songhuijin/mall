@@ -7,10 +7,12 @@
 <script>
 
 // import jsonp from 'jsonp'
-
+import storage from './storage/index.js'
 export default {
   name: 'App',
   mounted(){
+    // storage.setItem('a',1)
+    storage.clear('a')
     // //通过CORS跨域
     // this.$axios.get('https://www.easy-mock.com/mock/5b012c1fe6e1035843cd3aff/mockapi/table/list').then({
 
