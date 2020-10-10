@@ -3,6 +3,7 @@ import App from './App.vue'
 import axios from 'axios'
 import VueRouter from 'vue-router'
 import Vuex from 'vuex'
+import router from './router.js'
 
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios;
@@ -11,5 +12,6 @@ Vue.use(VueRouter)
 Vue.use(Vuex)
 
 new Vue({
+  router,
   render: h => h(App),
 }).$mount('#app')
