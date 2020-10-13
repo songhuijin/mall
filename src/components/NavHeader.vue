@@ -247,6 +247,7 @@ export default {
             z-index:10;
             overflow: hidden;
             transition: all .5s;
+            background-color: #ffffff;
             .product{
               position: relative;
               float: left;
