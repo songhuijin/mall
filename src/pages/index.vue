@@ -96,7 +96,7 @@
     </div>
     <service-bar></service-bar>
     <modal title="提示" 
-      sureText="查看详情"
+      sureText="查看购物车"
       :showModal="showModal" 
       btnType="1"
       @submit="goToCart"
