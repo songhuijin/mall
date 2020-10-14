@@ -10,7 +10,7 @@
                 <ul v-for="(item,index) in menuList" :key="index">
                   <li v-for="(sub,i) in item" :key="i" >
                     <a :href="sub?'/#/product/'+sub.id:'javascript:;'">
-                      <img :src="sub.img || '/imgs/item-box-1.png'"/>
+                      <img v-lazy="sub.img || '/imgs/item-box-1.png'"/>
                       {{sub.name || '小米9'}}
                     </a>
                   </li>
@@ -49,7 +49,7 @@
         </div>
         <swiper :options="swiperOption">
           <swiper-slide v-for="(item,index) in slideList" :key="index">
-            <a :href="'/#/product/'+item.id"><img :src="item.img"/></a>
+            <a :href="'/#/product/'+item.id"><img v-lazy="item.img"/></a>
           </swiper-slide>
           <div class="swiper-pagination" slot="pagination"></div>
           <div class="swiper-button-prev" slot="button-prev"></div>
@@ -58,12 +58,12 @@
       </div>
       <div class="ads-box">
         <a :href="'/#/product/'+item.id" v-for="(item,index) in adsList" :key="index">
-          <img :src="item.img" alt="">
+          <img v-lazy="item.img" alt="">
         </a>
       </div>
       <div class="banner">
         <a href="/#/product/30">
-          <img src="/imgs/banner-1.png" alt="">
+          <img v-lazy="'/imgs/banner-1.png'" alt="">
         </a>
       </div>
     </div>
@@ -73,7 +73,7 @@
         <div class="wrapper">
           <div class="banner-left">
             <a href="/#/product/35">
-              <img src="/imgs/mix-alpha.jpg" alt="">
+              <img v-lazy="'/imgs/mix-alpha.jpg'" alt="">
             </a>
           </div>
           <div class="list-box">
@@ -81,7 +81,7 @@
               <div class="item" v-for="(item,i) in arr" :key="i">
                 <span :class="{'new-pro':i%2==0,'kill-pro':i%2==1}">{{i%2==0?"新品":"秒杀"}}</span>
                 <div class="item-img">
-                  <img :src="item.mainImage" alt="">
+                  <img v-lazy="item.mainImage" alt="">
                 </div>
                 <div class="item-info">
                   <h3>{{item.name}}</h3>
