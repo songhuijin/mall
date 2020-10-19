@@ -28,10 +28,13 @@ axios.defaults.timeout = 8000;
 //接口错误拦截
 axios.interceptors.response.use(function (response){
   let res = response.data;
+  let path = location.hash;
   if(res.status == 0){//接口成功返回的状态值为 0
     return res.data
   }else if(res.status == 10){//未登录接口返回的状态值为 10
-    window.location.href = '/#/login'
+    if (path!=='#/index'){
+      window.location.href = '/#/login'
+    }
   }else{
     alert(res.msg);
     return Promise.reject(res);

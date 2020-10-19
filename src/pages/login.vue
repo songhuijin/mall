@@ -38,7 +38,7 @@
   </div>
 </template>
 <script>
-import { mapActions } from 'vuex';
+
 export default {
   name: 'login',
   data(){
@@ -51,36 +51,20 @@ export default {
   methods:{
     login(){
       let { username,password } = this;
-      if(!username || !password){
-        this.$message.error('请输入正确的用户名和密码');
-        return;
-      }
+      // if(!username || !password){
+      //   this.$message.error('请输入正确的用户名和密码');
+      //   return;
+      // }
       this.axios.post('/user/login',{
         username,
         password
-      }).then((res)=>{
-        this.$cookie.set('userId',res.id,{expires:'Session'});
-        // this.$store.dispatch('saveUserName',res.username);
-        this.saveUserName(res.username);
-        this.$router.push({
-          name:'index',
-          params:{
-            from:'login'
-          }
-        });
+      }).then(()=>{
+        
       })
     },
-    ...mapActions(['saveUserName']),
+    
     register(){
-      this.$message.success('功能暂未开发');
-      return;
-      /*this.axios.post('/user/register',{
-        username:'admin1',
-        password:'admin1',
-        email:'admin1@163.com'
-      }).then(()=>{
-        this.$message.success('注册成功');
-      })*/
+      
     }
   }
 }
