@@ -6,6 +6,7 @@ import VueRouter from 'vue-router'
 import Vuex from 'vuex'
 import router from './router.js'
 import VueLazyload from 'vue-lazyload'
+import VueCookie from 'vue-cookie'
 // import env from './env'
 
 
@@ -33,11 +34,13 @@ axios.interceptors.response.use(function (response){
     window.location.href = '/#/login'
   }else{
     alert(res.msg);
+    return Promise.reject(res);
   }
 })
 
 Vue.use(VueRouter)
 Vue.use(Vuex)
+Vue.use(VueCookie)
 Vue.use(VueLazyload,{
   loading:'/imgs/loading-svg/loading-bars.svg'
 })
