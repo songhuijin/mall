@@ -38,7 +38,7 @@
   </div>
 </template>
 <script>
-
+import {mapActions} from 'vuex'
 export default {
   name: 'login',
   data(){
@@ -51,18 +51,18 @@ export default {
   methods:{
     login(){
       let { username,password } = this;
-      // if(!username || !password){
-      //   this.$message.error('请输入正确的用户名和密码');
-      //   return;
-      // }
-      this.axios.post('/user/login',{
+      
+      this.$axios.post('/user/login',{
         username,
         password
-      }).then(()=>{
-        
+      }).then((res)=>{
+        this.$cookie.set('userId',res.id,{expires:'1M'});
+        // this.$store.dispatch('saveUserName',res.username)
+        this.saveUserName(res.username);
+        this.$router.push('/index')
       })
     },
-    
+    ...mapActions(['saveUserName']),
     register(){
       
     }
@@ -162,4 +162,5 @@ export default {
     }
   }
 }
+
 </style>

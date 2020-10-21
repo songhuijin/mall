@@ -3,10 +3,11 @@ import App from './App.vue'
 import axios from 'axios'
 // import VueAxios from 'vue-axios'
 import VueRouter from 'vue-router'
-import Vuex from 'vuex'
+// import Vuex from 'vuex'
 import router from './router.js'
 import VueLazyload from 'vue-lazyload'
 import VueCookie from 'vue-cookie'
+import store from './store'
 // import env from './env'
 
 
@@ -42,7 +43,7 @@ axios.interceptors.response.use(function (response){
 })
 
 Vue.use(VueRouter)
-Vue.use(Vuex)
+// Vue.use(Vuex)
 Vue.use(VueCookie)
 Vue.use(VueLazyload,{
   loading:'/imgs/loading-svg/loading-bars.svg'
@@ -57,6 +58,7 @@ Vue.prototype.$axios = axios;
 
 
 new Vue({
+  store,
   router,
   render: h => h(App),
 }).$mount('#app')
