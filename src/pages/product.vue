@@ -38,11 +38,21 @@
       <div class="item-video">
         <h2>60帧超慢动作摄影<br/>慢慢回味每一瞬间的精彩</h2>
         <p>后置960帧电影般超慢动作视频，将眨眼间的美妙展现得淋漓尽致！<br/>更能AI 精准分析视频内容，15个场景智能匹配背景音效。</p>
-        <div class="video-bg" @click="showSlide=true"></div>
+        <!-- transition动画 -->
+        <!-- <div class="video-bg" @click="showSlide=true"></div>
         <div class="video-box">
           <div class="overlay" v-if="showSlide"></div>
           <div class="video" :class="{'slide':showSlide}">
             <span class="icons-close" @click="showSlide=false"></span>
+            <video src="/imgs/product/video.mp4" muted autoplay controls="controls"></video>
+          </div>
+        </div> -->
+        <!-- animation动画 -->
+        <div class="video-bg" @click="showSlide='slideDown'"></div>
+        <div class="video-box">
+          <div class="overlay" v-if="showSlide=='slideDown'"></div>
+          <div class="video" :class="showSlide">
+            <span class="icons-close" @click="showSlide='slideUp'"></span>
             <video src="/imgs/product/video.mp4" muted autoplay controls="controls"></video>
           </div>
         </div>
@@ -64,7 +74,8 @@
     },
     data(){
       return {
-        showSlide:false,
+        showSlide:'',//animation动画
+        // showSlide:false,//transition动画
         swiperOption:{
           autoplay:true,
           slidesPerView:3,
@@ -166,6 +177,26 @@
             opacity: .4;
             z-index:10;
           }
+          @keyframes slideDown{
+            from{
+              top:-50%;
+              opacity:0;
+            }
+            to{
+              top:50%;
+              opacity:1;
+            }
+          }
+          @keyframes slideUp{
+            from{
+              top:50%;
+              opacity:1;
+            }
+            to{
+              top:-50%;
+              opacity:10;
+            }
+          }
           .video{
             position: fixed;
             top:-50%;
@@ -174,12 +205,20 @@
             z-index:10;
             height:536px;
             width:1000px;
-            opacity: 0;
-            transition: all .6s;
-            &.slide{
+            // opacity: 0;//transition动画
+            opacity: 1;//animation动画
+            &.slideDown{
+              animation: slideDown .6s linear;
               top:50%;
-              opacity: 1;
             }
+            &.slideUp{
+              animation: slideUp .6s linear;
+            }
+            // transition: all .6s;//transition动画
+            // &.slide{//transition动画
+            //   top:50%;
+            //   opacity: 1;
+            // }
             .icons-close{
               position: absolute;
               top:20px;
