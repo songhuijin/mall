@@ -15,7 +15,7 @@ export default {
   name:'service-bar'
 }
 </script>
-<style scoped lang="scss">
+<style  lang="scss">
 @import './../assets/scss/mixin.scss';
   .service{
     padding:33px 0;

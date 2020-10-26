@@ -18,7 +18,7 @@ export default {
   name:'nav-footer'
 }
 </script>
-<style scoped lang="scss">
+<style  lang="scss">
   .footer{
     height:234px;
     border-top:4px solid #FF6600;
