@@ -19,7 +19,7 @@
           <ul class="cart-item-list">
             <li class="cart-item" v-for="(item,index) in list" v-bind:key="index">
               <div class="item-check">
-                <span class="checkbox" v-bind:class="{'checked':item.productSelected}"></span>
+                <span class="checkbox" v-bind:class="{'checked':item.productSelected}" @click="updateCart(item)"></span>
               </div>
               <div class="item-name">
                 <img v-lazy="item.productMainImage" alt="">
@@ -28,13 +28,13 @@
               <div class="item-price">{{item.productPrice}}</div>
               <div class="item-num">
                 <div class="num-box">
-                  <a href="javascript:;">-</a>
+                  <a href="javascript:;" @click="updateCart(item,'-')">-</a>
                   <span>{{item.quantity}}</span>
-                  <a href="javascript:;">+</a>
+                  <a href="javascript:;" @click="updateCart(item,'+')">+</a>
                 </div>
               </div>
               <div class="item-total">{{item.productTotalPrice}}</div>
-              <div class="item-del"></div>
+              <div class="item-del" @click="delProduct(item)"></div>
             </li>
           </ul>
         </div>
@@ -50,6 +50,11 @@
         </div>
       </div>
     </div>
+    <modal title="删除" btnType='3' :showModal="delModal" @cancel="delModal=false" @submit="submitDelProduct">
+      <template v-slot:body>
+        是否确认删除此商品
+      </template>
+    </modal>
     <service-bar></service-bar>
     <nav-footer></nav-footer>
   </div>
@@ -58,19 +63,23 @@
   import OrderHeader from './../components/OrderHeader'
   import ServiceBar from './../components/ServiceBar'
   import NavFooter from './../components/NavFooter'
+  import Modal from './../components/Modal'
   export default{
     name:'index',
     components:{
       OrderHeader,
       ServiceBar,
-      NavFooter
+      NavFooter,
+      Modal
     },
     data(){
       return {
         list:[],//商品列表
         allChecked:false,//是否全选
         cartTotalPrice:0,//商品总金额
-        checkedNum:0//选中商品数量
+        checkedNum:0,//选中商品数量
+        delModal:false,
+        productObj:{}
       }
     },
     mounted(){
@@ -82,12 +91,54 @@
           this.renderData(res);
         })
       },
+      //控制全选功能
       toggleAll(){
         let url = this.allChecked?'/carts/unSelectAll':'/carts/selectAll';
         this.$axios.put(url).then((res)=>{
           this.renderData(res);
         })
       },
+      //更新购物车数量
+      updateCart(item,type){
+        let quantity = item.quantity,
+            selected = item.productSelected;
+        if(type == '-'){
+          if(quantity == 1){
+            alert('商品至少保留一件');
+            return;
+          }
+          --quantity;
+        }else if(type == '+'){
+          if(quantity > item.productStock){
+            alert('购买数量不能超过库存数量');
+            return
+          }
+          ++quantity
+        }else{
+          selected = !item.productSelected
+        }
+        this.$axios.put(`./carts/${item.productId}`,{
+          quantity,
+          selected
+        }).then((res)=>{
+          this.renderData(res);
+        })
+      },
+      //删除购物车商品
+      delProduct(item){
+        this.productObj = item
+        this.delModal = true
+        // this.$axios.delete(`./carts/${item.productId}`).then((res)=>{
+        //   this.renderData(res);
+        // })
+      },
+      submitDelProduct(){
+        this.$axios.delete(`./carts/${this.productObj.productId}`).then((res)=>{
+          this.delModal = false;
+          this.renderData(res);
+        })
+      },
+      //公共赋值
       renderData(res){
         this.list = res.cartProductVoList || [];
         this.allChecked = res.selectedAll;
