@@ -104,13 +104,13 @@
             selected = item.productSelected;
         if(type == '-'){
           if(quantity == 1){
-            alert('商品至少保留一件');
+            this.$Message.warning('商品至少保留一件');
             return;
           }
           --quantity;
         }else if(type == '+'){
           if(quantity > item.productStock){
-            alert('购买数量不能超过库存数量');
+            this.$Message.warning('购买数量不能超过库存数量');
             return
           }
           ++quantity
@@ -134,6 +134,7 @@
       },
       submitDelProduct(){
         this.$axios.delete(`./carts/${this.productObj.productId}`).then((res)=>{
+          this.$Message.success(res.msg)
           this.delModal = false;
           this.renderData(res);
         })
@@ -149,7 +150,7 @@
       order(){
         let isCheck = this.list.every(item=>!item.productSelected);//返回boolean
         if(isCheck){
-          alert('请选择一件商品');
+          this.$Message.warning('请选择一件商品');
         }else{
           this.$router.push('/order/confirm');
         }

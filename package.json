@@ -11,6 +11,7 @@
   "dependencies": {
     "axios": "^0.20.0",
     "core-js": "^3.6.5",
+    "element-ui": "^2.13.2",
     "jsonp": "^0.2.1",
     "mockjs": "^1.1.0",
     "node-sass": "^4.14.1",
