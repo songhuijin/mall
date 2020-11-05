@@ -25,7 +25,7 @@
           <div class="item-address">
             <h2 class="addr-title">收货地址</h2>
             <div class="addr-list clearfix">
-              <div class="addr-info" v-for="(item,index) in list" :key="index">
+              <div class="addr-info" v-for="(item,index) in list" :key="index" :class="{'checked':index == checkIndex}" @click="checkIndex=index">
                 <h2>{{item.receiverName}}</h2>
                 <div class="phone">{{item.receiverMobile}}</div>
                 <div class="street">{{item.receiverProvince + ' ' + item.receiverCity + ' ' + item.receiverDistrict}}<br>{{item.receiverAddress}}</div>
@@ -33,7 +33,7 @@
                   <a href="javascript:;" class="fl" @click="delAddress(item)">
                     <svg class="icon icon-del"><use xlink:href="#icon-del"></use></svg>
                   </a>
-                  <a href="javascript:;" class="fr">
+                  <a href="javascript:;" class="fr" @click="editAddressModal(item)">
                     <svg class="icon icon-edit"><use xlink:href="#icon-edit"></use></svg>
                   </a>
                 </div>
@@ -105,21 +105,21 @@
       <template v-slot:body>
         <div class="edit-wrap">
           <div class="item">
-            <input type="text" class="input" placeholder="姓名">
-            <input type="text" class="input" placeholder="手机号">
+            <input type="text" class="input" placeholder="姓名" v-model="checkItem.receiverName">
+            <input type="text" class="input" placeholder="手机号" v-model="checkItem.receiverMobile">
           </div>
           <div class="item">
-            <select name="province">
+            <select name="province" v-model="checkItem.receiverProvince">
               <option value="北京">北京</option>
               <option value="天津">天津</option>
               <option value="河北">河北</option>
             </select>
-            <select name="city">
+            <select name="city" v-model="checkItem.receiverCity">
               <option value="北京">北京</option>
               <option value="天津">天津</option>
               <option value="河北">石家庄</option>
             </select>
-            <select name="district">
+            <select name="district" v-model="checkItem.receiverDistrict">
               <option value="北京">昌平区</option>
               <option value="天津">海淀区</option>
               <option value="河北">东城区</option>
@@ -129,10 +129,10 @@
             </select>
           </div>
           <div class="item">
-            <textarea name="street"></textarea>
+            <textarea name="street" v-model="checkItem.receiverAddress"></textarea>
           </div>
           <div class="item">
-            <input type="text" class="input" placeholder="邮编">
+            <input type="text" class="input" placeholder="邮编" v-model="checkItem.receiverZip">
           </div>
         </div>
       </template>
@@ -162,6 +162,7 @@ export default{
       userAction:'',//用户行为 0：新增 1：编辑 2：删除
       showEditModal:false,//是否显示新增或者编辑弹框
       delModal:false,
+      checkIndex:0
     }
   },
   components:{
@@ -190,7 +191,8 @@ export default{
     closeModal(){
       this.checkItem = {};
       this.userAction = '';
-      this.delModal = false
+      this.delModal = false;
+      this.showEditModal = false
     },
     delAddress(item){
       this.checkItem = item;
@@ -200,7 +202,7 @@ export default{
     //地址删除，编辑，新增
     submitAddress(){
       let {checkItem,userAction} = this
-      let method,url;
+      let method,url,params;
       if(userAction == 0){
         method = 'post'
         url = '/shippings'
@@ -211,7 +213,46 @@ export default{
         method = 'delete'
         url = `/shippings/${checkItem.id}`
       }
-      this.$axios[method](url).then(()=>{
+      if(userAction == 0 || userAction == 1){
+        if(!checkItem.receiverName){
+          this.$Message.error('请输入收货人名称')
+          return;
+        }
+        if(!checkItem.receiverMobile){
+          this.$Message.error('请输入收货人手机号')
+          return;
+        }
+        if(!/\d{11}/.test(checkItem.receiverMobile)){
+          this.$Message.error('请输入正确格式的手机号')
+          return;
+        }
+        if(!checkItem.receiverProvince){
+          this.$Message.error('请选择省份')
+          return;
+        }
+        if(!checkItem.receiverCity){
+          this.$Message.error('请选择对应的城市')
+          return;
+        }
+        if(!checkItem.receiverDistrict || !checkItem.receiverAddress){
+          this.$Message.error('请输入收获地址')
+          return;
+        }
+         if(!checkItem.receiverZip || !/\d{6}/.test(checkItem.receiverZip)){
+          this.$Message.error('请输入6位邮编')
+          return;
+        }
+        params = {
+          receiverName:checkItem.receiverName,
+          receiverMobile:checkItem.receiverMobile,
+          receiverProvince:checkItem.receiverProvince,
+          receiverCity:checkItem.receiverCity,
+          receiverDistrict:checkItem.receiverDistrict,
+          receiverAddress:checkItem.receiverAddress,
+          receiverZip:checkItem.receiverZip,
+        }
+      }
+      this.$axios[method](url,params).then(()=>{
         this.closeModal();
         this.getAddressList()
         this.$Message.success('操作成功')
@@ -220,6 +261,12 @@ export default{
     // 打开新增地址弹框
     openAddressModal(){
       this.userAction = 0;
+      this.checkItem = {}
+      this.showEditModal = true;
+    },
+    editAddressModal(item){
+      this.userAction = 1;
+      this.checkItem = item
       this.showEditModal = true;
     },
     // closeModal(){
@@ -227,11 +274,13 @@ export default{
     // },
     // 订单提交
     orderSubmit(){
-      this.$router.push({
-        path:'/order/pay',
-        query:{
-          orderNo:123
-        }
+      let item = this.list[this.checkIndex];
+      if(!item){
+        this.$Message.warning('请选择收获地址')
+        return
+      }
+      this.$axios.post('/orders',{shippingId:item.id}).then((res)=>{
+        this.$router.push({path:'/order/pay',query:{orderNo:res.orderNo}})
       })
     }
   }
@@ -266,6 +315,7 @@ export default{
               padding: 15px 24px;
               font-size: 14px;
               color:#757575;
+              margin-top:10px;
             }
             .addr-info{
               cursor:pointer;
