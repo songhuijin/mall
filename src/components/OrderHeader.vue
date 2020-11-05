@@ -6,7 +6,9 @@
       </div>
       <div class="title">
         <h2>{{title}}
-          <slot name='tip'>111</slot>
+          <slot name='tip'>
+            <span>{{tip}}</span>
+          </slot>
         </h2>
       </div>
       <div class="username">
@@ -20,7 +22,8 @@ import {mapState} from 'vuex'
 export default {
   name:'order-header',
   props:{
-    title:String
+    title:String,
+    tip:String
   },
   computed:{
     ...mapState(['username','cartCount'])
