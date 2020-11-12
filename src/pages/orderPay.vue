@@ -50,12 +50,24 @@
         </div>
       </div>
       <scan-pay-code v-if="showPay" :img="payImg" @close="closePayModal"></scan-pay-code>
+      <modal title="支付确认" 
+        btnType="3"
+        :showModal="showPayModal"
+        sureText="查看订单"
+        cancelText="未支付"
+        @cancel="showPayModal=false"
+        @submit="goOrderList">
+        <template v-slot:body>
+          <P>您确认是否完成支付</P>
+        </template>
+      </modal>
     </div>
   </div>
 </template>
 <script>
 import QRCode from 'qrcode'
 import ScanPayCode from './../components/ScanPayCode'
+import Modal from './../components/Modal'
 export default {
   name:'orderPay',
   data(){
@@ -67,12 +79,14 @@ export default {
       orderDetail:[],
       payment:0,
       payType:1,
-      payImg:''
+      payImg:'',
+      showPayModal:false,//是否显示两次支付确认弹窗
+      T:null,//定时器
     }
   },
   components:{
     ScanPayCode,
-    // QRCode
+    Modal
   },
   mounted(){
     this.getOrderDetail()
@@ -85,7 +99,19 @@ export default {
       clearInterval(this.T);
     },
     goOrderList(){
+      console.log(1)
       this.$router.push('/order/list');
+    },
+    //轮询当前订单支付状态
+    loopOrderState(){
+      this.T = setInterval(()=>{
+        this.$axios.get(`/orders/${this.orderNo}`).then(res=>{
+          if(res.status == 20){
+            clearInterval(this.T)
+            this.goOrderList()
+          }
+        })
+      },1000)
     },
     getOrderDetail(){
       this.$axios.get(`/orders/${this.orderNo}`).then(res=>{
@@ -108,7 +134,7 @@ export default {
           QRCode.toDataURL(res.content).then(url=>{
             this.showPay = true
             this.payImg = url
-            // console.log(url)
+            this.loopOrderState()
           }).catch(err=>{
             this.$Message.error('微信二维码生成失败，请稍后重试！')
             console.error(err);
@@ -116,7 +142,7 @@ export default {
         })
       }
       this.payType = payType
-    }
+    },
   }
 }
 </script>
