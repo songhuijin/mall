@@ -45,15 +45,16 @@
           <div class="pay-way">
             <p>支付平台</p>
             <div class="pay pay-ali" :class="{'checked':payType == 1}" @click="paySubmit(1)"></div>
-            <div class="pay pay-wechat" :class="{'checked':payType == 2 }" @click="payType = 2"></div>
+            <div class="pay pay-wechat" :class="{'checked':payType == 2 }" @click="paySubmit(2)"></div>
           </div>
         </div>
       </div>
-      <scan-pay-code v-if="showPay"></scan-pay-code>
+      <scan-pay-code v-if="showPay" :img="payImg" @close="closePayModal"></scan-pay-code>
     </div>
   </div>
 </template>
 <script>
+import QRCode from 'qrcode'
 import ScanPayCode from './../components/ScanPayCode'
 export default {
   name:'orderPay',
@@ -65,11 +66,13 @@ export default {
       showPay:false,//是否显示微信支付弹框
       orderDetail:[],
       payment:0,
-      payType:1
+      payType:1,
+      payImg:''
     }
   },
   components:{
-    ScanPayCode
+    ScanPayCode,
+    // QRCode
   },
   mounted(){
     this.getOrderDetail()
@@ -95,6 +98,22 @@ export default {
     paySubmit(payType){
       if(payType == 1){
         window.open('/#/order/aliPay?orderId='+this.orderNo,'_blank')
+      }else{
+        this.$axios.post('/pay',{
+          orderId:this.orderNo,
+          orderName:'Vue高仿小米商城',
+          amount:0.01,
+          payType:2
+        }).then((res)=>{
+          QRCode.toDataURL(res.content).then(url=>{
+            this.showPay = true
+            this.payImg = url
+            // console.log(url)
+          }).catch(err=>{
+            this.$Message.error('微信二维码生成失败，请稍后重试！')
+            console.error(err);
+          })
+        })
       }
       this.payType = payType
     }

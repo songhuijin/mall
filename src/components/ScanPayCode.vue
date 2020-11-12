@@ -5,7 +5,7 @@
       <div class="img-scan"></div>
       <div class="img-pay">
         <div class="title">微信支付<em @click="close"></em></div>
-        <div class="qrcode"><img src="/imgs/pay/icon-qrcode.png"></div>
+        <div class="qrcode"><img :src="img"></div>
         <div class="tip">
           <p>请使用<span class="theme-color">微信</span>扫一扫</p>
           <p>二维码完成支付</p>
@@ -16,7 +16,15 @@
 </template>
 <script>
   export default{
-    name:'scan-pay-code'
+    name:'scan-pay-code',
+    props:{
+      img:String
+    },
+    methods:{
+      close(){
+        this.$emit('close')
+      }
+    }
   }
 </script>
 <style lang="scss">
@@ -35,6 +43,7 @@
       bottom: 0;
       opacity: .6;
       background-color: #000000;
+      z-index: 1;
     }
     .item-wrap{
       position: fixed;
@@ -44,6 +53,7 @@
       transform: translate(-50%,-50%);
       display: flex;
       align-items: center;
+      z-index: 2;
       .img-scan{
         @include bgImg(296px,485px,'/imgs/pay/icon-scan.png');
       }

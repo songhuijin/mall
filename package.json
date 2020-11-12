@@ -16,6 +16,7 @@
     "jsonp": "^0.2.1",
     "mockjs": "^1.1.0",
     "node-sass": "^4.14.1",
+    "qrcode": "^1.4.4",
     "sass-loader": "^10.0.3",
     "swiper": "5.x",
     "vue": "^2.6.11",
