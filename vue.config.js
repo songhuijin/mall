@@ -13,5 +13,8 @@ module.exports = {
     }
   },
   lintOnSave: false,
-  productionSourceMap:false
+  productionSourceMap:false,
+  chainWebpack:(config)=>{
+    config.plugins.delete('prefetch');//删除预加载
+  }
 }

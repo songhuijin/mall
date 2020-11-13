@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-// import Home from './pages/home.vue'
-// import Index from './pages/index.vue'
+import Home from './pages/home.vue'
+import Index from './pages/index.vue'
 // import Product from './pages/product.vue'
 // import Detail from './pages/detail.vue'
 // import Cart from './pages/cart.vue'
@@ -20,35 +20,35 @@ export default new Router({
     {
       path: '/login',
       name: 'login',
-      component: () => import('./pages/login.vue'),
+      component: () => import('./pages/login.vue')
     },
     {
       path:'/',
       name:'home',
-      component: () => import('./pages/home.vue'),
+      component: Home,
       redirect:'/index',
       children:[
         {
           path: 'index',
           name: 'index',
-          component: () => import('./pages/index.vue'),
+          component: Index
         }, {
           path: 'product/:id',
           name: 'product',
           // component: Product,
-          component: resolve => require(['./pages/product.vue'],resolve),
+          component: () => import('./pages/product.vue')
         }, {
           path: 'detail/:id',
           name: 'detail',
           // component: Detail,
-          component: resolve => require(['./pages/detail.vue'], resolve),
+          component: () => import('./pages/detail.vue')
         }
       ]
     },
     {
       path: '/cart',
       name: 'cart',
-      component: () => import('./pages/cart.vue'),
+      component: () => import('./pages/cart.vue')
     },
     {
       path: '/order',
@@ -58,22 +58,22 @@ export default new Router({
         {
           path: 'list',
           name: 'order-list',
-          component: () => import('./pages/orderList.vue'),
+          component: () => import('./pages/orderList.vue')
         },
         {
           path: 'confirm',
           name: 'order-confirm',
-          component: () => import('./pages/orderConfirm.vue'),
+          component: () => import('./pages/orderConfirm.vue')
         },
         {
           path: 'pay',
           name: 'order-pay',
-          component: () => import('./pages/orderPay.vue'),
+          component: () => import('./pages/orderPay.vue')
         },
         {
           path: 'aliPay',
           name: 'order-aliPay',
-          component: () => import('./pages/aliPay.vue'),
+          component: () => import('./pages/aliPay.vue')
         }
       ]
     }
