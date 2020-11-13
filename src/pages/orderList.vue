@@ -41,6 +41,14 @@
               </div>
             </div>
           </div>
+          <el-pagination
+            class="pagination"
+            background
+            layout="prev, pager, next"
+            :pageSize="pageSize"
+            :total="total"
+            @current-change="handleChange">
+          </el-pagination>
           <no-data v-if="!loading && List.length == 0"></no-data>
         </div>
       </div>
@@ -61,7 +69,10 @@
     data(){
       return{
         List:[],
-        loading:true
+        loading:true,
+        pageSize:10,
+        pageNum:1,
+        total:0
       }
     },
     mounted(){
@@ -69,9 +80,14 @@
     },
     methods:{
       getOrderList(){
-        this.$axios.get('/orders').then(res=>{
+        this.$axios.get('/orders',{
+          params:{
+            pageNum:this.pageNum
+          }
+        }).then(res=>{
           this.loading=false
           this.List = res.list
+          this.total = res.total
         }).catch(()=>{
           this.loading=false
         })
@@ -83,6 +99,10 @@
             "orderNo":orderNo
           }
         })
+      },
+      handleChange(pageNum){
+        this.pageNum = pageNum
+        this.getOrderList()
       }
     }
   }
