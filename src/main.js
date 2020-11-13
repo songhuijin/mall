@@ -8,7 +8,7 @@ import router from './router.js'
 import VueLazyload from 'vue-lazyload'
 import VueCookie from 'vue-cookie'
 import store from './store'
-import { Message, Pagination} from 'element-ui'
+import { Message, Pagination,Button} from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 // import env from './env'
 
@@ -59,6 +59,7 @@ Vue.use(VueLazyload,{
 
 // Vue.use(VueAxios, axios)
 Vue.use(Pagination)
+Vue.use(Button)
 
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios;

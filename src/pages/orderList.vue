@@ -41,14 +41,17 @@
               </div>
             </div>
           </div>
-          <el-pagination
+          <!-- <el-pagination
             class="pagination"
             background
             layout="prev, pager, next"
             :pageSize="pageSize"
             :total="total"
             @current-change="handleChange">
-          </el-pagination>
+          </el-pagination> -->
+          <div class="load-more">
+            <el-button type="primary" :loading="loading" @click="loadMore">加载更多</el-button>
+          </div>
           <no-data v-if="!loading && List.length == 0"></no-data>
         </div>
       </div>
@@ -69,7 +72,7 @@
     data(){
       return{
         List:[],
-        loading:true,
+        loading:false,
         pageSize:10,
         pageNum:1,
         total:0
@@ -80,13 +83,16 @@
     },
     methods:{
       getOrderList(){
+        this.loading = true
         this.$axios.get('/orders',{
           params:{
-            pageNum:this.pageNum
+            pageNum:this.pageNum,
+            pageSize:10
           }
         }).then(res=>{
           this.loading=false
-          this.List = res.list
+          // this.List = res.list
+          this.List = this.List.concat(res.list)
           this.total = res.total
         }).catch(()=>{
           this.loading=false
@@ -102,6 +108,10 @@
       },
       handleChange(pageNum){
         this.pageNum = pageNum
+        this.getOrderList()
+      },
+      loadMore(){
+        this.pageNum++;
         this.getOrderList()
       }
     }
