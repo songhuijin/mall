@@ -3,6 +3,7 @@
     <div class="wrapper">
       <div class="container">
         <div class="order-box">
+          <loading v-if="loading"></loading>
           <div class="order" v-for="(item,index) in List" :key="index">
             <div class="order-title">
               <div class="item-info fl">
@@ -40,6 +41,7 @@
               </div>
             </div>
           </div>
+          <no-data v-if="!loading && List.length == 0"></no-data>
         </div>
       </div>
     </div>
@@ -47,14 +49,19 @@
 </template>
 <script>
   import OrderHeader from './../components/OrderHeader'
+  import Loading from './../components/Loading'
+  import NoData from './../components/NoData'
   export default{ 
     name:'order-list',
     components:{
-      OrderHeader
+      OrderHeader,
+      Loading,
+      NoData
     },
     data(){
       return{
-        List:[]
+        List:[],
+        loading:true
       }
     },
     mounted(){
@@ -63,7 +70,10 @@
     methods:{
       getOrderList(){
         this.$axios.get('/orders').then(res=>{
+          this.loading=false
           this.List = res.list
+        }).catch(()=>{
+          this.loading=false
         })
       },
       goPay(orderNo){
