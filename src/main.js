@@ -10,6 +10,7 @@ import VueCookie from 'vue-cookie'
 import store from './store'
 import { Message, Pagination,Button} from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import infiniteScroll from 'vue-infinite-scroll'
 // import env from './env'
 
 
@@ -56,7 +57,7 @@ Vue.use(VueCookie)
 Vue.use(VueLazyload,{
   loading:'/imgs/loading-svg/loading-bars.svg'
 })
-
+Vue.use(infiniteScroll)
 // Vue.use(VueAxios, axios)
 Vue.use(Pagination)
 Vue.use(Button)

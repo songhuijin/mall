@@ -41,6 +41,7 @@
               </div>
             </div>
           </div>
+          <!-- 分页器 -->
           <!-- <el-pagination
             class="pagination"
             background
@@ -49,8 +50,16 @@
             :total="total"
             @current-change="handleChange">
           </el-pagination> -->
-          <div class="load-more">
+          <!-- 点击按钮加载更多 -->
+          <!-- <div class="load-more" v-if="showNextPage">
             <el-button type="primary" :loading="loading" @click="loadMore">加载更多</el-button>
+          </div> -->
+          <!-- 滚动加载数据 -->
+          <div class="scroll-more"
+            v-infinite-scroll="scrollMore" 
+            infinite-scroll-disabled="busy" 
+            infinite-scroll-distance="410">
+            <img src="/imgs/loading-svg/loading-spinning-bubbles.svg" v-show="loading">
           </div>
           <no-data v-if="!loading && List.length == 0"></no-data>
         </div>
@@ -75,7 +84,9 @@
         loading:false,
         pageSize:10,
         pageNum:1,
-        total:0
+        total:0,
+        busy: false,//滚动加载，是否触发
+        showNextPage:true,//加载更多，是否显示按钮
       }
     },
     mounted(){
@@ -83,6 +94,7 @@
     },
     methods:{
       getOrderList(){
+        this.busy = true
         this.loading = true
         this.$axios.get('/orders',{
           params:{
@@ -90,10 +102,12 @@
             pageSize:10
           }
         }).then(res=>{
-          this.loading=false
+          this.loading = false
+          this.busy = false
           // this.List = res.list
           this.List = this.List.concat(res.list)
           this.total = res.total
+          this.showNextPage = res.hasNextPage
         }).catch(()=>{
           this.loading=false
         })
@@ -106,13 +120,41 @@
           }
         })
       },
+      //第一种方法：分页器
       handleChange(pageNum){
         this.pageNum = pageNum
         this.getOrderList()
       },
+      //第二种方法：加载更多按钮
       loadMore(){
         this.pageNum++;
         this.getOrderList()
+      },
+      //第三种方法，滚动加载，通过插件实现
+      scrollMore(){
+        this.busy = true;
+        setTimeout(()=>{
+          this.pageNum++;
+          this.getList()
+        },500)
+      },
+      //专门给scrollMore使用
+      getList(){
+        this.loading = true
+        this.$axios.get('/orders',{
+          params:{
+            pageNum:this.pageNum,
+            pageSize:10
+          }
+        }).then(res=>{
+          this.loading = false
+          this.List = this.List.concat(res.list)
+          if(res.hasNextPage){
+            this.busy = false
+          }else{
+            this.busy = true
+          }
+        })
       }
     }
   }
